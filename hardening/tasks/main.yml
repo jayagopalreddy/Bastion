@@ -1,0 +1,130 @@
+---
+# tasks file for hardening
+- name: change login port
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: 'Port 22'
+    line: 'Port 1922'
+- name: add configuration for session timeout
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    line: "{{ item }}"
+  with_items:
+    - "ClientAliveInterval 60"
+    - "ClientAliveCountMax 3"
+    - "AuthenticationMethods publickey,password publickey,keyboard-interactive"
+- name: change the sshd file configuration for two factor authentication
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: 'ChallengeResponseAuthentication no'
+    line: 'ChallengeResponseAuthentication yes'
+- name: change the authentication methode option on pam.d file
+  lineinfile:
+    dest: /etc/pam.d/sshd
+    line: 'auth required pam_google_authenticator.so nullok'
+- name: change the configuration on pam.d file
+  lineinfile:
+    dest: /etc/pam.d/sshd
+    regexp: '@include common-auth'
+    line: '#@include common-auth'
+- name: create a file 
+  file:
+    path: /etc/motd
+    state: touch
+    owner: root
+    group: root
+- name: insert msg
+  blockinfile:
+    path: "{{ item.msg_path }}"
+    state: present
+#    marker: no
+    content: | 
+      {{ item.block }}
+  with_items:
+    - "{{ block_msg }}"
+- name: change login port
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    line: 'Banner /etc/issue.net'
+- name: create a file for fail2ban
+  file:
+    path: "/etc/fail2ban/jail.conf"
+    state: touch
+    owner: root
+    group: root
+- name: modifying fail2ban configuration
+  lineinfile:
+    dest: /etc/fail2ban/jail.conf
+    line: "{{ item }}"
+  with_items:
+    - "[sshd]"
+    - "enabled  = true"
+    - "port     = 1922"
+    - "filter   = sshd"
+    - "logpath  = /var/log/auth.log"
+    - "maxretry = 3"
+    - "findtime = 300"
+    - "bantime  = 600"
+    - "   "
+    - "[postfix]"
+    - "enabled  = false"
+    - "port     = smtp"
+    - "filter   = postfix"
+    - "logpath  = /var/log/mail.log"
+    - "maxretry = 5"
+- name: create a file for sysctl
+  file:
+    path: "/etc/sysctl.conf"
+    state: touch
+    owner: root
+    group: root
+- name: modifying Harden network with sysctl settings configuration
+  lineinfile:
+    dest: /etc/sysctl.conf
+    line: "{{ item }}"
+  with_items:
+    - "# IP Spoofing protection"
+    - "net.ipv4.conf.all.rp_filter = 1"
+    - "net.ipv4.conf.default.rp_filter = 1"
+    - ""
+    - "# Ignore ICMP broadcast requests"
+    - "net.ipv4.icmp_echo_ignore_broadcasts = 1"
+    - ""
+    - "# Disable source packet routing"
+    - "net.ipv4.conf.all.accept_source_route = 0"
+    - "net.ipv6.conf.all.accept_source_route = 0 "
+    - "net.ipv4.conf.default.accept_source_route = 0"
+    - "net.ipv6.conf.default.accept_source_route = 0"
+    - ""
+    - "# Ignore send redirects"
+    - "net.ipv4.conf.all.send_redirects = 0"
+    - "net.ipv4.conf.default.send_redirects = 0"
+    - ""
+    - "# Block SYN attacks"
+    - "net.ipv4.tcp_syncookies = 1"
+    - "net.ipv4.tcp_max_syn_backlog = 2048"
+    - "net.ipv4.tcp_synack_retries = 2"
+    - "net.ipv4.tcp_syn_retries = 5"
+    - ""
+    - "# Log Martians"
+    - "net.ipv4.conf.all.log_martians = 1"
+    - "net.ipv4.icmp_ignore_bogus_error_responses = 1"
+    - ""
+    - "# Ignore ICMP redirects"
+    - "net.ipv4.conf.all.accept_redirects = 0"
+    - "net.ipv6.conf.all.accept_redirects = 0"
+    - "net.ipv4.conf.default.accept_redirects = 0"
+    - "net.ipv6.conf.default.accept_redirects = 0"
+    - ""
+    - "# Ignore Directed pings"
+    - "net.ipv4.icmp_echo_ignore_all = 1"
+- name: restart the sysctl
+  shell: sysctl -p
+- name: restart sshd service
+  service:
+    name: sshd
+    state: restarted
+- name: restart fail2ban service
+  service:
+    name: fail2ban
+    state: restarted

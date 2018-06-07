@@ -1,0 +1,55 @@
+---
+# tasks file for ec2
+- name: create key pair using provided key_material
+  ec2_key:
+    name: bastion-key
+    #key_material: {{ pub_key }}
+    key_material: "{{ lookup('file', '/Users/jayagopal.reddy/.ssh/id_rsa.pub') }}"
+- name: example using security group rule descriptions
+  ec2_group:
+    name: bastion_sg
+    description: bastion_sg
+    vpc_id: vpc-ac9e6ec9
+    rules:
+      - proto: tcp
+        ports:
+          - 22
+          - 1922
+          - 25
+        cidr_ip: "{{ IP }}"
+        rule_desc: Minjar IP
+  register: bastion_sg
+- name: Launch Instance
+  ec2:
+    key_name: bastion-key
+    group: [ "bastion_sg" ]
+    instance_type: "{{ instance_type }}"
+    image: "{{ ami }}"
+    user_data: "{{ lookup('file', '/Users/jayagopal.reddy/Desktop/user_data.sh') }}"
+    wait: yes
+    volumes:
+      - device_name: /dev/xvda
+        volume_type: gp2
+        volume_size: 8
+        delete_on_termination: yes
+    region: us-west-2
+    vpc_subnet_id: subnet-0753f74e
+    assign_public_ip: yes
+    count: 1
+    instance_tags:
+        Name: Bastion-test
+        Team: Nutanix
+  register: ec2
+- name: Add new Instance to host group
+  add_host: 
+    name={{ item.public_ip }} 
+    groups= bastion
+  with_items: "{{ ec2.instances }}"
+- name: Wait for SSH to come up
+  wait_for:
+    host={{ item.public_ip }}
+    port=22
+    delay=60 
+    timeout=320 
+    state=started
+  with_items: "{{ ec2.instances }}"
