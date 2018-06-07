@@ -32,9 +32,7 @@ sudo mv /etc/fail2ban/jail.conf /tmp/
 sudo mv /etc/sysctl.conf /tmp/
 wget https://sourceforge.net/projects/sudosh2/files/sudosh2-1.0.5.tgz
 tar zxvf sudosh2-1.0.5.tgz
-cd sudosh2-1.0.5/
-sudo CFLAGS=”-D_GNU_SOURCE” ./configure
-sudo ./configure
+sudo ./sudosh2-1.0.5/configure
 sudo make
 sudo make install
 sudo sh -c "echo 'User_Alias ADMINS=ubuntu,ansible' >> /etc/sudoers"
