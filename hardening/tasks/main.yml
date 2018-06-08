@@ -12,7 +12,7 @@
   with_items:
     - "ClientAliveInterval 60"
     - "ClientAliveCountMax 3"
-    - "AuthenticationMethods publickey,password publickey,keyboard-interactive"
+   # - "AuthenticationMethods publickey,password publickey,keyboard-interactive"
 - name: change the sshd file configuration for two factor authentication
   lineinfile:
     dest: /etc/ssh/sshd_config
@@ -78,7 +78,7 @@
     state: touch
     owner: root
     group: root
-- name: modifying Harden network with sysctl settings configuration
+- name: modifying Harden network with sysctl configuration
   lineinfile:
     dest: /etc/sysctl.conf
     line: "{{ item }}"

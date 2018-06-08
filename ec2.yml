@@ -4,18 +4,16 @@
   roles:
    - ec2
   tasks:
-#  - name: Pause the script for 100 seconds
-#    pause: 
-#      seconds=100
   - name: get the public IP of Bastion server
     shell: aws ec2 describe-instances --query "Reservations[].Instances[][PublicIpAddress]" --filters "Name=tag:Name,Values=Bastion-test" >/etc/ansible/inventory && sed -i -e '3!d' /etc/ansible/inventory && sed -i -e 's/\"//g' /etc/ansible/inventory && sed -i -e 's/ //g' /etc/ansible/inventory &&  rm /etc/ansible/inventory-e
-#  - name: add a first line to the file
-#    lineinfile:
-#      path: /etc/ansible/inventory
-#      line: '[bastion]'
-#      insertbefore: BOF
-#  - name: add bastion inventory to the hosts
-#    shell: cat /etc/ansible/inventory >>/etc/ansible/hosts
+  - name: read the public IP
+    shell: cat /etc/ansible/inventory  
+    register: ip
+  - name: add a host to the inventory
+    lineinfile:
+      path: /etc/ansible/hosts
+      line: 'host1 ansible_ssh_host={{ip.stdout}} ansible_ssh_port=1922'
+      insertbefore: BOF
   - name: Pause the script for 60 seconds
     pause:
       seconds=60
@@ -24,12 +22,3 @@
   become: yes
   roles:
    - hardening
-
-- hosts: localhost
-  #become: yes
-  tasks:
-  - name: chnaging the login port from 22 to 1922
-    lineinfile:
-      dest: /etc/ansible/ansible.cfg
-      #regexp: '#remote_port    = 1922'
-      line: 'remote_port    = 1922'
