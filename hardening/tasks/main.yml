@@ -46,6 +46,15 @@
   lineinfile:
     dest: /etc/ssh/sshd_config
     line: 'Banner /etc/issue.net'
+- name: modifying default useradd configuration for sudosh
+  lineinfile:
+    dest: /etc/default/useradd
+    regexp: '(SHELL=.*)'
+    line: 'SHELL=/usr/local/bin/sudosh'
+- name: modifying shells configuration for sudosh
+  lineinfile:
+    dest: /etc/shells
+    line: '/usr/local/bin/sudosh'
 - name: create a file for fail2ban
   file:
     path: "/etc/fail2ban/jail.conf"
