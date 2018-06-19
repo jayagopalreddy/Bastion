@@ -7,8 +7,8 @@
     key_material: "{{ lookup('file', '/Users/jayagopal.reddy/.ssh/id_rsa.pub') }}"
 - name: example using security group rule descriptions
   ec2_group:
-    name: bastion_sg
-    description: bastion_sg
+    name: bastion-sg
+    description: bastion-sg
     vpc_id: vpc-ac9e6ec9
     rules:
       - proto: tcp
@@ -22,10 +22,10 @@
 - name: Launch Instance
   ec2:
     key_name: bastion-key
-    group: [ "bastion_sg" ]
+    group: [ "bastion-sg" ]
     instance_type: "{{ instance_type }}"
     image: "{{ ami }}"
-    user_data: "{{ lookup('file', '/Users/jayagopal.reddy/Desktop/user_data.sh') }}"
+    user_data: "{{ lookup('file', '/etc/ansible/role/user_data.sh') }}"
     wait: yes
     volumes:
       - device_name: /dev/xvda

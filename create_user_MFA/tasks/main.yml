@@ -12,6 +12,8 @@
 - name: Downloading pub key
   fetch: src=/home/{{ user_name }}/.ssh/id_rsa dest=/tmp/id_rsa.tmp flat=yes
 
+- name: enable a google authenticator
+  shell: sudo -u {{ user_name }} -H sh -c "yes | google-authenticator"
 - name: IP Address
   shell: curl ident.me
   register: ip
@@ -21,8 +23,10 @@
     host: localhost
     port: 25
     subject: Nutanix Bastion server access and IP:{{ip.stdout}}
-    body: Hi {{ user_name }}, PFA Private key
+    body: Hi {{ user_name }}, PFA Private key and Google_authenticator codes
     from: jayagopal.reddy@minjar.com
     to: "{{ email_id }}"
     attach: 
-      - /home/{{ user_name }}/.ssh/id_rsa
+      - /home/{{ user_name }}/.ssh/id_rsa 
+      - /home/{{ user_name }}/.google_authenticator
+  #delegate_to: localhost

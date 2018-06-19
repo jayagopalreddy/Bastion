@@ -1,6 +1,5 @@
 ---
 # vars file for create_user
-
 #ssh_key_path: "{{ lookup('file', '/Users/jayagopal.reddy/.ssh/id_rsa.pub') }}"
 # place a pub key on one path ans give "lookup"
 

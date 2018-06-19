@@ -2,4 +2,4 @@
 # vars file for ec2
 instance_type: t2.micro
 ami: ami-db710fa3
-IP: 106.51.254.182/32
+IP: 0.0.0.0/0

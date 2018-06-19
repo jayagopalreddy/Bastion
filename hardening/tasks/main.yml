@@ -27,6 +27,13 @@
     dest: /etc/pam.d/sshd
     regexp: '@include common-auth'
     line: '#@include common-auth'
+- name: create a sudosh shell script file
+  file:
+    path: "/root/sudosh.sh"
+    state: touch
+    owner: root
+    group: root
+    mode: 0700
 - name: create a file 
   file:
     path: /etc/motd
