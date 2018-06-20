@@ -3,8 +3,8 @@
 - name: create key pair using provided key_material
   ec2_key:
     name: bastion-key
-    #key_material: {{ pub_key }}
-    key_material: "{{ lookup('file', '/Users/jayagopal.reddy/.ssh/id_rsa.pub') }}"
+    key_material: "{{ pub_key }}"
+    #key_material: "{{ lookup('file', '/Users/jayagopal.reddy/.ssh/id_rsa.pub') }}"
 - name: example using security group rule descriptions
   ec2_group:
     name: bastion-sg
