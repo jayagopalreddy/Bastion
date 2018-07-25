@@ -1,24 +1,19 @@
 ---
 - hosts: localhost
-  #become: yes
+  become: yes
   roles:
    - ec2
   tasks:
   - name: get the public IP of Bastion server
-    shell: aws ec2 describe-instances --query "Reservations[].Instances[][PublicIpAddress]" --filters "Name=tag:Name,Values=Bastion-test" >/etc/ansible/inventory && sed -i -e '3!d' /etc/ansible/inventory && sed -i -e 's/\"//g' /etc/ansible/inventory && sed -i -e 's/ //g' /etc/ansible/inventory &&  rm /etc/ansible/inventory-e
-  - name: read the public IP
-    shell: cat /etc/ansible/inventory  
-    register: ip
+    ec2_instance_facts:
+      region: "{{ region }}"
+      filters:
+        "tag:Name": Bastion-test
+    register: ec2info
+  - name: Display ec2info
+    debug: var="ec2info.instances[0].public_ip_address"
   - name: add a host to the inventory
     lineinfile:
       path: /etc/ansible/hosts
-      line: 'host1 ansible_ssh_host={{ip.stdout}} ansible_ssh_port=1922'
+      line: 'host1 ansible_ssh_host={{ec2info.instances[0].public_ip_address}} ansible_ssh_port=1922'
       insertbefore: BOF
-  - name: Pause the script for 60 seconds
-    pause:
-      seconds=60
-
-- hosts: all
-  become: yes
-  roles:
-   - hardening
