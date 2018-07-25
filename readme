@@ -1,4 +1,4 @@
-Step1: Run ansible.sh script. It will install ansible, python, pip, boto, boto3, AWS cli.
+Step1: Run ansible.sh script. It will install ansible, python, pip, boto, boto3, AWS cli. (It will work for only Ubuntu OS)
             $bash -x ansible.sh
 Step2: Run the ec2.yml script. It will launch the AWS ec2 machine (Subnet should have a tag like "Environmet=dev") (If you have aws profile use 'AWS_PROFILE' otherwise no need)
             $AWS_PROFILE=user1 ansible-playbook ec2.yml -e "env=dev region=us-west-2"
