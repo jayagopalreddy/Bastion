@@ -2,15 +2,15 @@
 sudo apt-add-repository ppa:ansible/ansible -y
 sudo apt-get update -y
 sudo apt-get install ansible -y
-#sudo mv /etc/ansible/hosts /tmp/
-#sudo mv /etc/ansible/ansible.cfg /tmp/
-#sudo echo localhost >/etc/ansible/hosts
-#sudo echo [defaults] >/etc/ansible/ansible.cfg
-#sudo sh -c "echo 'inventory = /etc/ansible/hosts' >> /etc/ansible/ansible.cfg"
-#sudo sh -c "echo 'remote_user = root' >> /etc/ansible/ansible.cfg"
-#sudo sh -c "echo 'private_key_file = /root/.ssh/id_rsa' >> /etc/ansible/ansible.cfg"
-#sudo sh -c "echo 'host_key_checking = False' >> /etc/ansible/ansible.cfg"
-#sudo sh -c "echo 'log_path=/var/log/ansible' >> /etc/ansible/ansible.cfg"
+sudo mv /etc/ansible/hosts /tmp/
+sudo mv /etc/ansible/ansible.cfg /tmp/
+sudo echo localhost >/etc/ansible/hosts
+sudo sh -c "echo '[defaults]' >/etc/ansible/ansible.cfg
+sudo sh -c "echo 'inventory = /etc/ansible/hosts' >> /etc/ansible/ansible.cfg"
+sudo sh -c "echo 'remote_user = root' >> /etc/ansible/ansible.cfg"
+sudo sh -c "echo 'private_key_file = /root/.ssh/id_rsa' >> /etc/ansible/ansible.cfg"
+sudo sh -c "echo 'host_key_checking = False' >> /etc/ansible/ansible.cfg"
+sudo sh -c "echo 'log_path=/var/log/ansible' >> /etc/ansible/ansible.cfg"
 #sudo useradd -m ansible
 #sudo mkdir /home/ansible/.ssh
 #sudo ssh-keygen -f /home/ansible/.ssh/id_rsa -t rsa -N ''
@@ -41,3 +41,9 @@ sudo sh -c "echo 'Admins ALL=SUDOSH' >> /etc/sudoers"
 sudo mkdir /var/log/sudosh
 sudo chmod 733 /var/log/sudosh
 sudo service sshd restart
+sudo apt-get update
+sudo apt-get install python-pip python-dev build-essential -y
+export LC_ALL=C
+sudo pip install --upgrade pip
+sudo pip install boto boto3
+sudo apt install awscli -y
