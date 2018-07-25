@@ -1,5 +1,24 @@
 ---
 # tasks file for ec2
+- name: get subnet ID
+  ec2_vpc_subnet_facts:
+    region: "{{ region }}"
+    filters:
+      "tag:Environment": "{{ env }}"
+  register: subnetinfo
+- name: Display subnetinfo
+  debug: var="subnetinfo.subnets[0].subnet_id"
+- name: get vpc ID
+  ec2_vpc_subnet_facts:
+    region: "{{ region }}"
+    filters:
+      "tag:Environment": "{{ env }}"
+  register: vpcinfo
+- name: Display vpcinfo
+  debug: var="vpcinfo.subnets[0].vpc_id"
+- name: get the AMI id
+  shell: aws ec2 describe-images --filters "Name=owner-id,Values=099720109477" "Name=name,Values=ubuntu*" "Name=virtualization-type,Values=hvm" --region {{ region }} --query 'Images[*].{ID:ImageId,N:Name}' | grep -B 1 'hvm-ssd/ubuntu-xenial-16.04-amd64-server-20180627' | sed  '1!d' | sed 's/\"//g' | sed 's/\,//g' | awk '{print $2}'
+  register: amiid
 - name: create key pair using provided key_material
   ec2_key:
     name: bastion-key
@@ -9,7 +28,7 @@
   ec2_group:
     name: bastion-sg
     description: bastion-sg
-    vpc_id: vpc-ac9e6ec9
+    vpc_id: "{{ subnetinfo.subnets[0].vpc_id }}"
     rules:
       - proto: tcp
         ports:
@@ -24,16 +43,16 @@
     key_name: bastion-key
     group: [ "bastion-sg" ]
     instance_type: "{{ instance_type }}"
-    image: "{{ ami }}"
+    image: "{{ amiid.stdout }}"
     user_data: "{{ lookup('file', '/etc/ansible/role/user_data.sh') }}"
     wait: yes
     volumes:
       - device_name: /dev/xvda
         volume_type: gp2
-        volume_size: 8
+        volume_size: "{{ ebs_size }}"
         delete_on_termination: yes
-    region: us-west-2
-    vpc_subnet_id: subnet-0753f74e
+    region: "{{ region }}"
+    vpc_subnet_id: "{{ subnetinfo.subnets[0].subnet_id }}"
     assign_public_ip: yes
     count: 1
     instance_tags:
