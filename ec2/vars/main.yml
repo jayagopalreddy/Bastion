@@ -1,12 +1,16 @@
 ---
 # vars file for ec2
 
-#pub_key: "{{ lookup('file', '/Users/jayagopal.reddy/.ssh/id_rsa.pub') }}"
+pub_key: "{{ lookup('file', '/Users/jayagopal.reddy/.ssh/id_rsa.pub') }}"
 
 # place a pub key on one path ans give "lookup"
 
-pub_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvg3qrXA3MuHW+MRvYqT7JmpzGguVo051VmhHlSKEALPqGoJSXfqL22Q8v24G+hrSQeDYhYgoitsPt0hxCN8CHK6U+/nu8XWx+415NvMiG4l1wz1pPGT/g40yX/bsDsUVrr0w3aEMQBfT6rQ3eOP95ud1CHniXpmHbXnY/78b6LL5iVDlfh6jR5opd1Vq5Bs93W4w8smY6ICQQFsbTNCzZM+PHiWKrK55g6bR0uDcT+vfdvC0EqehrMBgPxgisVucJ9d8Z71m2CYLQEwHGRo3tsIrk0v4KlLDAVFG7YnsO51LG8s/drkevgw2MbF1V8jjSXWI4tbvJbcBi16PGTxQZ jayagopal.reddy@C02W82T5HV2R"
+#pub_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvg3qrXA3MuHW+MRvYqT7JmpzGguVo051VmhHlSKEALPqGoJSXfqL22Q8v24G+hrSQeDYhYgoitsPt0hxCN8CHK6U+/nu8XWx+415NvMiG4l1wz1pPGT/g40yX/bsDsUVrr0w3aEMQBfT6rQ3eOP95ud1CHniXpmHbXnY/78b6LL5iVDlfh6jR5opd1Vq5Bs93W4w8smY6ICQQFsbTNCzZM+PHiWKrK55g6bR0uDcT+vfdvC0EqehrMBgPxgisVucJ9d8Z71m2CYLQEwHGRo3tsIrk0v4KlLDAVFG7YnsO51LG8s/drkevgw2MbF1V8jjSXWI4tbvJbcBi16PGTxQZ jayagopal.reddy@C02W82T5HV2R"
 
 instance_type: t2.micro
-ami: ami-db710fa3
+#ami: ami-ba602bc2
 IP: 0.0.0.0/0
+#vpc_id: vpc-ac9e6ec9
+ebs_size: 20
+#subnet_id: subnet-0753f74e
+#region: us-west-2
